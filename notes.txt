@@ -1,3 +1,4 @@
+# if statements
 -d FILE                 - True if file is a dir
 -e FILE                 - True if file exists
 -f FILE                 - True if file eixists and is a reg file 

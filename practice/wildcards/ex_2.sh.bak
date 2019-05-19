@@ -1,0 +1,27 @@
+#!/bin/bash
+
+shopt -s nullglob
+
+extention() {
+    read -p "Enter file extention: " EXTENTION
+    FILES=*EXTENTION
+}
+prefix() {
+    read -p "Enter File prefix: " PREFIX
+    if [$PREFIX -eq ""]
+    then
+        PREFIX=$(date +%F)
+    fi
+}
+
+rename() {
+    extention
+    prefix
+    for FILE in *$FILES
+    do
+        mv $FILE ${PREFIX}-$FILE
+    done
+}
+
+shopt -u nullglob
+rename

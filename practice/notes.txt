@@ -1,0 +1,61 @@
+-d FILE                 - True if file is a dir
+-e FILE                 - True if file exists
+-f FILE                 - True if file eixists and is a reg file 
+-r FILE                 - True if file is readable by you 
+-s FILE                 - True if file exists adn is not empty
+-w FILE                 - True if File is writable by you 
+-x FILE                 - True is file is exefcutable by you 
+-z STRING               - True if string is empty 
+-n STRING               - True if string is NOT empty 
+
+STRING1=STRING2         - True if the strings are equal 
+STRING1!=STRING2        - True if the strings are NOT equal
+
+arg1 -eq arg2           - True if arg1 is equal to arg2
+arg1 -ne arg2           - True is arg1 is not equal to arg2
+
+arg1 -lt arg2           - less than
+arg1 -le arg2           - less than or equal to
+arg1 -gt arg2           - greater than
+arg1 -ge arg2           - greater than or equal to 
+
+#wildcards
+*                       - matches zero or more characters 
+*.txt                   - shows all .txt files 
+a*                      - shows all files starting with the letter a 
+a*.txt                  - shows all .txt files starting with a 
+
+?                       - matches exactly one character 
+?.txt                   - shows all one letter .txt files
+a?                      - shows 2 letter files starting with a 
+a?.txt                  - shows 2 letter .txt files starting with a
+?????.txt               - shows 5 letter .txt files
+
+# character class
+[]                      - matches characters inside the brakets
+ca[nt]*                 - will match:
+    - can
+    - cat
+    - candy
+    - catch
+can[nt]!                - will return files with out the [nt]
+ls c[aeiou]t            - will return things like 
+    - cat
+    - cot
+
+
+# Ranges
+[a-g]                   - match all files that start with with characters fron a - g
+[3-6]                   - matches all files that start with 3 to 6
+
+#predefines classes
+[[:apha:]]              - letters upper and lower
+[[:alnum:]]             - alpha + numbers
+[[:digit:]]             - numbers 0-9
+[[:lower:]]             - lower case only
+[[:space:]]             - whitespace (spaces tabs newline)
+[[:upper:]]             - upper case only
+
+
+#escape char
+\                       - is the esacpe character

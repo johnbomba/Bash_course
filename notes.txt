@@ -1,15 +1,60 @@
+#!/bin/bash             -shebang line for bash
+
+###################################################
+
+# debugging
+
+#!/bin/bash -x          -shebang for debuging xtrace
+set -x                  - enable xtrace to use in the command line
+set +x                  - disable xtrace in the comnad line
+# to add this to a script:
+# add set -x before line with a command example:
+
+set -x                  - enables xtrace for the commands in all lines following the set-x
+echo "test"             - command traced
+set +x                  - disables xtrace for evething after
+pwd                     - command not traced
+
+-ex                     - exits on an error status > 0
+-v                      - verbose prints shell input lines as they occur
+
+help set
+
+# simple script modification:
+
+#!/bin/bash
+#DEBUG="echo"           - if debug is commented out is will just be a space and not do anything
+$DEBUG ls               - anywhere else in the script
+
+PS4='+'                 - default line marker for -x
+PS4='+ $BASH_SOURCE'    - changes the default to + <script name>
+PS4='+ $LINENO'         - changes the default to sho line number
+
+# avoide running windows scripts on linux or vice versa
+windows adds carage returns to text files it will throw erros on linux and linux scripts will
+have errors on window due to the lack of carrage returns
+use the -v command to check if files have carrage returns
+
+
+# you can use <dos2unix> to fix scripts
+# you can use <unix2dos> to go the other way
+
+
+####################################################
+
 # if statements
+
 -d FILE                 - True if file is a dir
 -e FILE                 - True if file exists
--f FILE                 - True if file eixists and is a reg file 
--r FILE                 - True if file is readable by you 
+-f FILE                 - True if file eixists and is a reg file
+-r FILE                 - True if file is readable by you
 -s FILE                 - True if file exists adn is not empty
--w FILE                 - True if File is writable by you 
--x FILE                 - True is file is exefcutable by you 
--z STRING               - True if string is empty 
--n STRING               - True if string is NOT empty 
+-w FILE                 - True if File is writable by you
+-x FILE                 - True is file is exefcutable by you
+-z STRING               - True if string is empty
+-n STRING               - True if string is NOT empty
 
-STRING1=STRING2         - True if the strings are equal 
+STRING1=STRING2         - True if the strings are equal
 STRING1!=STRING2        - True if the strings are NOT equal
 
 arg1 -eq arg2           - True if arg1 is equal to arg2
@@ -18,21 +63,23 @@ arg1 -ne arg2           - True is arg1 is not equal to arg2
 arg1 -lt arg2           - less than
 arg1 -le arg2           - less than or equal to
 arg1 -gt arg2           - greater than
-arg1 -ge arg2           - greater than or equal to 
+arg1 -ge arg2           - greater than or equal to
 
 #wildcards
-*                       - matches zero or more characters 
-*.txt                   - shows all .txt files 
-a*                      - shows all files starting with the letter a 
-a*.txt                  - shows all .txt files starting with a 
 
-?                       - matches exactly one character 
+*                       - matches zero or more characters
+*.txt                   - shows all .txt files
+a*                      - shows all files starting with the letter a
+a*.txt                  - shows all .txt files starting with a
+
+?                       - matches exactly one character
 ?.txt                   - shows all one letter .txt files
-a?                      - shows 2 letter files starting with a 
+a?                      - shows 2 letter files starting with a
 a?.txt                  - shows 2 letter .txt files starting with a
 ?????.txt               - shows 5 letter .txt files
 
 # character class
+
 []                      - matches characters inside the brakets
 ca[nt]*                 - will match:
     - can
@@ -40,16 +87,18 @@ ca[nt]*                 - will match:
     - candy
     - catch
 can[nt]!                - will return files with out the [nt]
-ls c[aeiou]t            - will return things like 
+ls c[aeiou]t            - will return things like
     - cat
     - cot
 
 
 # Ranges
+
 [a-g]                   - match all files that start with with characters fron a - g
 [3-6]                   - matches all files that start with 3 to 6
 
 #predefines classes
+
 [[:apha:]]              - letters upper and lower
 [[:alnum:]]             - alpha + numbers
 [[:digit:]]             - numbers 0-9
@@ -59,4 +108,111 @@ ls c[aeiou]t            - will return things like
 
 
 #escape char
+
 \                       - is the esacpe character
+
+####################################################
+
+
+#case statements - like an if statement to compair against multiple values
+#case statements are CASE sensative
+#if the entered arg doesnt match the cases in teh statement nothing happens
+
+#example
+
+case "$1" in                                - opening a case statement $1 is a command line arg
+    start|START)                            - if $1 == start OR START execute the following line. the pipe acts as an OR
+        /usr/sbin/sshd                      - only runs if the line above is true
+        ;;                                  - ends the first 'if' statement
+    stop)                                   - if $1 == stop - will only work for stop. STOP Will not work here
+        kill $(cat /var/run/sshd.pid)       - only runs if the above is True
+        ;;                                  - ends this 'if' statemet
+esac                                        - case backwards ends the statement
+
+# add the following to the case statement above esac to expand
+
+    *)
+        echo "Usage: $0 start|stop" ; exit 1
+        ;;
+esac
+
+
+#you can use character classs
+
+read -p "Enter y or n: " ANSWER             - input line
+case "$ANSWER" in                           - use the ANSWER variable for the statment
+    [Yy]|[Yy][Ee][Ss])                      - use character classes for either 'y' or any combination of yes lower or caps
+        echo "you answered yes."            - echo for the return
+        ;;                                  - end the 'if' block
+esac
+
+
+#logging
+
+syslog                              - syslog standard built into linux
+facilities:
+    kern, user, mail,daemon, auth   - user is default but you can specify others
+    local0 - local7                 - custon facilities
+
+possiblie location:
+    /var/log/messages
+    /var/log/syslog
+
+#usage
+
+logger "message"                                - passes message to logger util
+logger -p local0.info "message"                 - -p specifies the local0 facility .info is the sevarity followed with a 'message'
+logger -t myscript -p local0.info "message"     - -t tags a log use the script name in the tag so you can grep it from the log file later
+logger -i -t myscript "message"                 - -i includes the pid (process id) use if you are running multiple scripts at the same time
+logger -s -t mysctipt -p local0.info "message"  - same as above but the -s sends the report to the terminal as well
+
+
+####################################################
+
+### 0 is True 1 is False in bash ###
+
+####################################################
+
+#while loops
+
+infinite loops must be killed by either CTRL+C or if a process the kill command
+
+#!/bin/bash
+INDEX=1                                         - create an index variable
+while [ $INDEX -lt 6 ]                          - while index is < 1
+do
+    echo "creating projcet-${INDEX}"            - echo command
+    mkdir /usr/local/project-${INDEX}           - mkdir
+    ((INDEX++))                                 - increment index variable needs (()) to do math - arithmatic expansion needs double parens
+done
+
+
+#read a file line by line
+
+#!/bin/bash
+LINE_NUM=1                                      - sets line #
+while read LINE                                 - while there is a line to read
+do
+    echo "${LINE_NUM}: ${LINE}"                 - prints the line to the terminal
+    ((LINE_NUM++))                              - increment 
+done < /etc/fstab                               - this is the file to read
+
+#modify the above to only print lines with xfs
+
+grep xfs /etc/fstab | while read LINE           - grep xfs <location> then pipe the lines to the while loop
+do
+    echo "xfs: ${LINE}"                         - echo to term
+done
+
+#read command variables
+
+grep xfs /etc/fstab | while read FS MP REST     - grep xfs <location> then pipe the lines to the while loop FS MP and REST are variables FS is the first word MP is the second REST is everything else
+    echo "${FS_NUM}: file system: ${FS}"
+    echo "${FS_NUM}: mount point: ${MP}"
+    ((FS_NUM++))
+done
+
+# if you want to exit a loop but not the script use:
+
+break           - will break out of a loop
+continue        - restarts the loop at the next iteration
